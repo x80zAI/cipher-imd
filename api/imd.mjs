@@ -183,7 +183,8 @@ function postBody(op, body, req, id) {
   const payment = header(req, 'payment-signature');
   if (op !== 'submit' && payment !== undefined) invalid('Payment authorization is only accepted when submitting a reviewed request.');
   if (op === 'challenge') {
-    if (body !== undefined && (!record(body) || Object.keys(body).length)) invalid('The payment challenge does not accept an input body.');
+    // Vercel represents an absent request body as null; challenges always forward no body.
+    if (body !== undefined && body !== null && (!record(body) || Object.keys(body).length)) invalid('The payment challenge does not accept an input body.');
     return undefined;
   }
   if (op === 'submit') {
